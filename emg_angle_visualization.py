@@ -3,15 +3,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 from emg_filiter import process_emg_data,downsample_signal,trim_to_match_length
-from decoder_function import rescale_array
+from encoder_function import rescale_array
 from save_npy_fun import ensure_directory_exists,save_processed_data
 
 fs = 1000
 
-# EXP_DIR   = './exp'
-EXP_DIR   = './EMG_data/jack/1kg'
-# data_date = get_latest_date(EXP_DIR) 
-data_date = '2024_07_30_1334'
+EXP_DIR   = './exp'
+EXP_DIR   = './EMG_data/yu/other_2kg'
+data_date = get_latest_date(EXP_DIR) 
+data_date = '2024_08_15_1259'
 
 decoded_file_path = f'{EXP_DIR}/{data_date}/1/1.txt'
 decoder = Decoder()
@@ -82,7 +82,7 @@ def butter_lowpass_filter(data, cutoff, fs, order=4):
     return y
 
 # 设定滤波器参数
-cutoff_frequency = 24  # 截止频率为24 Hz
+cutoff_frequency = 2  # 截止频率为24 Hz
 sampling_rate = 50  # 采样频率为50 Hz
 window_size = 50  # 移动平均窗口大小
 

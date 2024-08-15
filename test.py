@@ -5,7 +5,7 @@ import serial
 import time, datetime, os, shutil
 from datetime import datetime
 from eeg_decoder import Decoder
-from decoder_function import decoder
+from encoder_function import decoder
 import threading
 import queue
 from collections import deque
@@ -81,7 +81,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # 初始化队列用于线程间通信
         self.angle_queue = queue.Queue()
-        self.filtered_emg_queue = queue.Queue()  # 用于存储滤波后的EMG数据
+        # self.filtered_emg_queue = queue.Queue()  # 用于存储滤波后的EMG数据
 
         # 初始化环形缓冲区用于存储最近6秒的EMG数据（假设采样率为1000Hz）
         self.emg_circular_buffer = deque(maxlen=6001*64)  # 6秒 * 1000Hz * 32字节
@@ -92,15 +92,15 @@ class MainWindow(QtWidgets.QMainWindow):
         # 启动线程读取EMG和角度数据
         self.emg_thread = threading.Thread(target=self.read_emg_data)
         self.angle_thread = threading.Thread(target=self.read_angle_data)
-        self.filter_thread = threading.Thread(target=self.filter_emg_data)
+        # self.filter_thread = threading.Thread(target=self.filter_emg_data)
         self.file_write_thread = threading.Thread(target=self.write_to_file)
         self.emg_thread.daemon = True
         self.angle_thread.daemon = True
-        self.filter_thread.daemon = True
+        # self.filter_thread.daemon = True
         self.file_write_thread.daemon = True
         self.emg_thread.start()
         self.angle_thread.start()
-        self.filter_thread.start()
+        # self.filter_thread.start()
         self.file_write_thread.start()
 
         # 设置定时器来更新图表数据
@@ -116,13 +116,13 @@ class MainWindow(QtWidgets.QMainWindow):
                 try:
                     raw_data = self.ser_1.read(32).hex()  # 读取32字节EMG数据
                     self.raw_data_buffer_save += raw_data
-                    with self.lock:
-                        self.emg_circular_buffer.append(raw_data)
-                    emg_count += 1
-                    if emg_count > 6000:  # 6秒的数据对应的字节数
-                        with self.lock:
-                            self.emg_circular_buffer = deque(list(self.emg_circular_buffer)[-6000:], maxlen=6001*64)  # 保留最後的6000個元素
-                        emg_count = 0
+                    # with self.lock:
+                    #     self.emg_circular_buffer.append(raw_data)
+                    # emg_count += 1
+                    # if emg_count > 6000:  # 6秒的数据对应的字节数
+                    #     with self.lock:
+                    #         self.emg_circular_buffer = deque(list(self.emg_circular_buffer)[-6000:], maxlen=6001*64)  # 保留最後的6000個元素
+                    #     emg_count = 0
                 except serial.SerialException as e:
                     print(f"An error occurred while reading EMG data: {e}")
                     break
@@ -143,20 +143,20 @@ class MainWindow(QtWidgets.QMainWindow):
         except Exception as e:
             print(f"An error occurred in the read_angle_data thread: {e}")
 
-    def filter_emg_data(self):
-        try:
-            while True:
-                raw_data_combined = ""
-                with self.lock:
-                    if len(self.emg_circular_buffer) > 39:
-                        raw_data_list = list(self.emg_circular_buffer)  # 将缓冲区转换为列表
-                        raw_data_combined = ''.join(raw_data_list)  # 合并缓冲区中的数据
-                if raw_data_combined:  # 确保 raw_data_combined 非空
-                    decoded_data = self.decoder.decode(raw_data_combined)  # 对缓冲区进行解码
-                    filtered_data = decoded_data[:, 1]  # 对解码后的数据进行滤波处理
-                    self.filtered_emg_queue.put(filtered_data[-1])  # 将滤波后的最后一个值放入队列
-        except Exception as e:
-            print(f"An error occurred in the filter_emg_data thread: {e}")
+    # def filter_emg_data(self):
+    #     try:
+    #         while True:
+    #             raw_data_combined = ""
+    #             with self.lock:
+    #                 if len(self.emg_circular_buffer) > 39:
+    #                     raw_data_list = list(self.emg_circular_buffer)  # 将缓冲区转换为列表
+    #                     raw_data_combined = ''.join(raw_data_list)  # 合并缓冲区中的数据
+    #             if raw_data_combined:  # 确保 raw_data_combined 非空
+    #                 decoded_data = self.decoder.decode(raw_data_combined)  # 对缓冲区进行解码
+    #                 filtered_data = decoded_data[:, 1]  # 对解码后的数据进行滤波处理
+    #                 self.filtered_emg_queue.put(filtered_data[-1])  # 将滤波后的最后一个值放入队列
+    #     except Exception as e:
+    #         print(f"An error occurred in the filter_emg_data thread: {e}")
 
     def write_to_file(self):
         try:
@@ -177,18 +177,18 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def update_plot_data(self):
         try:
-            # 更新EMG数据
-            if not self.filtered_emg_queue.empty():
-                emg_value = self.filtered_emg_queue.get()
-                while not self.filtered_emg_queue.empty():
-                    self.filtered_emg_queue.get()
+            # # 更新EMG数据
+            # if not self.filtered_emg_queue.empty():
+            #     emg_value = self.filtered_emg_queue.get()
+            #     while not self.filtered_emg_queue.empty():
+            #         self.filtered_emg_queue.get()
 
-                # 更新数据
-                self.x = self.x[1:]  # 移除第一个元素
-                self.x.append(self.x[-1] + 1)  # 增加一个新元素
+                # # 更新数据
+                # self.x = self.x[1:]  # 移除第一个元素
+                # self.x.append(self.x[-1] + 1)  # 增加一个新元素
 
-                self.y_emg = self.y_emg[1:]  # 移除第一个元素
-                self.y_emg.append(emg_value)  # 增加一个新元素
+                # self.y_emg = self.y_emg[1:]  # 移除第一个元素
+                # self.y_emg.append(emg_value)  # 增加一个新元素
 
             # 更新角度数据
             if not self.angle_queue.empty():
@@ -199,8 +199,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.y_angle = self.y_angle[1:]  # 移除第一个元素
                 self.y_angle.append(angle_value)  # 增加一个新元素
 
-            # 更新图表
-            self.data_line_emg.setData(self.x, self.y_emg)
+            # # 更新图表
+            # self.data_line_emg.setData(self.x, self.y_emg)
             self.data_line_angle.setData(self.x, self.y_angle)
 
         except Exception as e:

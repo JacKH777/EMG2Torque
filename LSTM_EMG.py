@@ -138,6 +138,8 @@ else:
 print(f"X_train_seq shape: {X_train_seq.shape}")
 print(f"X_test_seq shape: {X_test_seq.shape}")
 
+print(f"y_train_seq shape: {y_train_seq.shape}")
+print(f"y_test_seq shape: {y_test_seq}")
 input_shape = (seq_length, 1)  # 时间步长, 特征数
 
 # 选择模型

@@ -2,11 +2,11 @@ import serial
 import time, datetime, os, shutil
 from datetime import datetime
 import keyboard
-from decoder_function import decoder
+from encoder_function import encoder
 
 # 初始化串口
 ser_1 = serial.Serial("COM4", 460800)
-angle = decoder()
+angle = encoder()
 angle.get_com_port('COM7')
 
 # 初始化变量

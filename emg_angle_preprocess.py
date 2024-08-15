@@ -4,7 +4,7 @@ import os
 from datetime import datetime
 from eeg_decoder import Decoder, get_latest_date
 from emg_filiter import process_emg_data, downsample_signal, trim_to_match_length
-from decoder_function import rescale_array
+from encoder_function import rescale_array
 from save_npy_fun import ensure_directory_exists, save_processed_data
 
 
