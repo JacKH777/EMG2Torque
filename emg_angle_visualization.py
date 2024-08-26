@@ -9,9 +9,9 @@ from save_npy_fun import ensure_directory_exists,save_processed_data
 fs = 1000
 
 EXP_DIR   = './exp'
-EXP_DIR   = './EMG_data/yu/other_2kg'
+# EXP_DIR   = './EMG_data/yu/other_2kg'
 data_date = get_latest_date(EXP_DIR) 
-data_date = '2024_08_15_1259'
+data_date = '2024_08_26_1143'
 
 decoded_file_path = f'{EXP_DIR}/{data_date}/1/1.txt'
 decoder = Decoder()
@@ -34,7 +34,25 @@ eeg_raw = eeg_raw[5*1000:-1*1000, 2]
 # print(len(angle))
 # print(len(eeg_raw))
 # eeg_raw = eeg_raw[:, 1]
+
+# 添加极端值处理函数
+def replace_extreme_values(signal, threshold_factor=3):
+    mean_value = np.mean(signal)
+    std_value = np.std(signal)
+    threshold_high = mean_value + threshold_factor * std_value
+    threshold_low = mean_value - threshold_factor * std_value
+    
+    for i in range(1, len(signal) - 1):
+        if signal[i] > threshold_high or signal[i] < threshold_low:
+            signal[i] = (signal[i-1] + signal[i+1]) / 2  # 用左右值的平均值替换极端值
+    return signal
+
+# 处理EMG数据
 eeg_raw = process_emg_data(eeg_raw)
+eeg_raw = replace_extreme_values(eeg_raw)  # 替换极端值
+
+
+# eeg_raw = process_emg_data(eeg_raw)
 eeg_raw = downsample_signal(eeg_raw,1000,50)
 angle = angle[5*50:-1*50]
 # angle = rescale_array(angle,30,90)
