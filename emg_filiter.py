@@ -9,7 +9,7 @@ def apply_hilbert_transform(data):
     analytic_signal = hilbert(data)
     return np.abs(analytic_signal)
 
-def apply_lowpass_filter(data, fs, cutoff=0.5, order=3):
+def apply_lowpass_filter(data, fs, cutoff=0.3, order=3):
     b, a = butter(order, cutoff / (0.5 * fs), btype='low')
     return filtfilt(b, a, data, axis=0)
 

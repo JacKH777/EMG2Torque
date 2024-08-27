@@ -11,7 +11,7 @@ fs = 1000
 EXP_DIR   = './exp'
 # EXP_DIR   = './EMG_data/yu/other_2kg'
 data_date = get_latest_date(EXP_DIR) 
-data_date = '2024_08_26_1143'
+# data_date = '2024_08_27_1008'
 
 decoded_file_path = f'{EXP_DIR}/{data_date}/1/1.txt'
 decoder = Decoder()

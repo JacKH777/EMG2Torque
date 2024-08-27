@@ -10,10 +10,10 @@ from save_npy_fun import ensure_directory_exists, save_processed_data
 
 fs = 1000
 
-# EXP_DIR = './exp'
-EXP_DIR = './EMG_data/jack/other_2kg'
-# data_date = get_latest_date(EXP_DIR)
-data_date = '2024_08_08_1954'
+EXP_DIR = './exp'
+# EXP_DIR = './EMG_data/jack/other_2kg'
+data_date = get_latest_date(EXP_DIR)
+# data_date = '2024_08_08_1954'
 
 decoded_file_path = f'{EXP_DIR}/{data_date}/1/1.txt'
 decoder = Decoder()
@@ -43,7 +43,7 @@ t = np.arange(eeg_raw.shape[0]) / 50
 angle[angle < 20] += 360
 
 # 找到所有接近30度的点
-indices_30 = np.where((angle >= 20) & (angle <= 30))[0]
+indices_30 = np.where((angle >= 27) & (angle <= 33))[0]
 
 # 计算每个点的斜率
 slopes = np.gradient(angle)
@@ -55,7 +55,7 @@ for idx in indices_30:
     end_idx = min(idx + 100, len(slopes))
     if end_idx - start_idx > 0:
         max_slope_idx = start_idx + np.argmax(np.abs(slopes[start_idx:end_idx]))
-        if 20 <= angle[max_slope_idx] <= 30:
+        if 27 <= angle[max_slope_idx] <= 33:
             if not selected_points or max_slope_idx - selected_points[-1] >= 200:
                 selected_points.append(max_slope_idx)
             else:
@@ -274,8 +274,8 @@ if save_data.lower() == 'y':
     ensure_directory_exists(train_data_path)
     
     for i, (torque_subarray, emg_subarray) in enumerate(zip(torque_subarrays, emg_subarrays)):
-        if i == 13:
-            break
+        # if i == 13:
+        #     break
         if len(torque_subarray) > 0 and len(emg_subarray) > 0:  # 确保数组非空
             save_processed_data(torque_subarray, f'torque_{i+1}.npy', train_data_path)
             save_processed_data(emg_subarray, f'emg_{i+1}.npy', train_data_path)
