@@ -84,56 +84,56 @@ fig1.tight_layout()
 # 顯示所有圖形
 # plt.show()
 
-from numpy import diff
-from scipy.signal import butter, filtfilt
+# from numpy import diff
+# from scipy.signal import butter, filtfilt
 
-# 定义移动平均滤波器函数
-def moving_average_filter(data, window_size):
-    return np.convolve(data, np.ones(window_size)/window_size, mode='same')
+# # 定义移动平均滤波器函数
+# def moving_average_filter(data, window_size):
+#     return np.convolve(data, np.ones(window_size)/window_size, mode='same')
 
-# 定义Butterworth低通滤波器函数
-def butter_lowpass_filter(data, cutoff, fs, order=4):
-    nyquist = 0.5 * fs
-    normal_cutoff = cutoff / nyquist
-    b, a = butter(order, normal_cutoff, btype='low', analog=False)
-    y = filtfilt(b, a, data)
-    return y
+# # 定义Butterworth低通滤波器函数
+# def butter_lowpass_filter(data, cutoff, fs, order=4):
+#     nyquist = 0.5 * fs
+#     normal_cutoff = cutoff / nyquist
+#     b, a = butter(order, normal_cutoff, btype='low', analog=False)
+#     y = filtfilt(b, a, data)
+#     return y
 
-# 设定滤波器参数
-cutoff_frequency = 2  # 截止频率为24 Hz
-sampling_rate = 50  # 采样频率为50 Hz
-window_size = 50  # 移动平均窗口大小
+# # 设定滤波器参数
+# cutoff_frequency = 2  # 截止频率为24 Hz
+# sampling_rate = 50  # 采样频率为50 Hz
+# window_size = 50  # 移动平均窗口大小
 
-# 对角度数据进行移动平均平滑
-smoothed_angle = rescale_array(angle,30,90)
-smoothed_angle = moving_average_filter(smoothed_angle, window_size)
-# smoothed_angle = rescale_array(smoothed_angle,20,90)
+# # 对角度数据进行移动平均平滑
+# smoothed_angle = rescale_array(angle,30,90)
+# smoothed_angle = moving_average_filter(smoothed_angle, window_size)
+# # smoothed_angle = rescale_array(smoothed_angle,20,90)
 
-# 计算角速度
-angular_velocity = np.gradient(smoothed_angle, t)
+# # 计算角速度
+# angular_velocity = np.gradient(smoothed_angle, t)
 
-# 计算角加速度
-angular_acceleration = np.gradient(angular_velocity, t)
+# # 计算角加速度
+# angular_acceleration = np.gradient(angular_velocity, t)
 
-# 绘制平滑后的角度和角加速度
-fig, ax = plt.subplots(2, 1, figsize=(10, 8))
+# # 绘制平滑后的角度和角加速度
+# fig, ax = plt.subplots(2, 1, figsize=(10, 8))
 
-# 绘制平滑后的角度信号
-ax[0].plot(t[150:-150], smoothed_angle[150:-150])
-ax[0].set_title('Smoothed Angle')
-ax[0].set_xlabel('Time [s]')
-ax[0].set_ylabel('Angle [degrees]')
-ax[0].grid(True)
+# # 绘制平滑后的角度信号
+# ax[0].plot(t[150:-150], smoothed_angle[150:-150])
+# ax[0].set_title('Smoothed Angle')
+# ax[0].set_xlabel('Time [s]')
+# ax[0].set_ylabel('Angle [degrees]')
+# ax[0].grid(True)
 
-# 绘制角加速度信号
-ax[1].plot(t[150:-150], angular_acceleration[150:-150])
-ax[1].set_title('Angular Acceleration')
-ax[1].set_xlabel('Time [s]')
-ax[1].set_ylabel('Acceleration [degree/s^2]')
-ax[1].grid(True)
+# # 绘制角加速度信号
+# ax[1].plot(t[150:-150], angular_acceleration[150:-150])
+# ax[1].set_title('Angular Acceleration')
+# ax[1].set_xlabel('Time [s]')
+# ax[1].set_ylabel('Acceleration [degree/s^2]')
+# ax[1].grid(True)
 
-# 调整布局
-fig.tight_layout()
+# # 调整布局
+# fig.tight_layout()
 
 # 显示图形
 plt.show()
