@@ -153,7 +153,6 @@ elif model_name == 'simple_rnn':
     model = build_simple_rnn_model(input_shape)
 elif model_name == 'lstm':
     model = build_lstm_model(input_shape)
-
 learning_rate = 0.003
 optimizer = Adam(learning_rate=learning_rate)
 model.compile(optimizer=optimizer, loss='mse')

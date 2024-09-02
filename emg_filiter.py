@@ -20,7 +20,7 @@ def apply_moving_average(data, window_size):
 def apply_median_filter(data, kernel_size):
     return medfilt(data, kernel_size)
 
-def process_emg_data(raw_data, fs=1000.0):
+def  process_emg_data(raw_data, fs=1000.0):
     if raw_data.shape[0] < 10:
         raise ValueError("The length of the input vector must be greater than 9.")
     
