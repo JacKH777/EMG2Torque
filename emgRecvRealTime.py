@@ -92,6 +92,7 @@ def process_data():
     global buffer
     with open(os.path.join(fileDir, '1', fileName_filtered), 'a') as f_filtered:
         while True:
+            event.wait() 
             local_buffer = ""
             
             # 使用锁从全局字符串缓冲区复制数据到本地变量
@@ -108,7 +109,7 @@ def process_data():
                 np.savetxt(f_filtered, filtered_data, delimiter=',')
                 # f_filtered.write(f"{filtered_value:.6f}\n")
                 # f_filtered.flush()
-            event.wait()
+            event.clear()
 
 
 # 启动接收数据的线程
