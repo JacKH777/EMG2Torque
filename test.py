@@ -232,35 +232,29 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-# 生成示例EMG信号（包含噪声和极端值）
-np.random.seed(0)
-emg_signal = np.random.normal(0, 1, 1000)
-emg_signal[200:205] = 10  # 模拟极端值
-emg_signal[800:805] = -10  # 模拟极端值
+fileName_filtered = './exp/2024_09_12_1055/1/filtered_EEG.txt'  # 之前保存的数据文件
+fileName_angle = './exp/2024_09_12_1055/1/angle.txt'
 
-# 定义一个检测极端值的阈值
-threshold = 3  # 设定一个合理的阈值，例如均值±3倍标准差
-mean_value = np.mean(emg_signal)
-std_value = np.std(emg_signal)
+# 读取保存的滤波数据
+try:
+    # 从文件中读取数据，每一行是一个数据点
+    data = np.loadtxt(fileName_filtered)
+    data_angle = np.loadtxt(fileName_angle)
+    print(len(data_angle))
+    # 绘制数据
+    plt.figure(figsize=(10, 6))
+    plt.plot(data, label='Filtered EEG Data', color='blue')
 
-# 标记极端值为NaN
-emg_signal_cleaned = np.where(
-    (emg_signal > mean_value + threshold * std_value) | 
-    (emg_signal < mean_value - threshold * std_value), 
-    np.nan, 
-    emg_signal
-)
+    # 添加图表标签和标题
+    plt.title('Filtered EEG Data Over Time')
+    plt.xlabel('Sample Index')
+    plt.ylabel('EEG Value')
 
-# 使用线性插值填补NaN值
-nans, x = np.isnan(emg_signal_cleaned), lambda z: z.nonzero()[0]
-emg_signal_cleaned[nans] = np.interp(x(nans), x(~nans), emg_signal_cleaned[~nans])
+    # 显示图例
+    plt.legend()
 
-# 绘制原始信号和处理后的信号
-plt.figure(figsize=(12, 6))
-plt.plot(emg_signal, label='Original EMG Signal')
-plt.plot(emg_signal_cleaned, label='Cleaned EMG Signal', color='red')
-plt.legend()
-plt.title("EMG Signal - Outlier Removal and Interpolation")
-plt.xlabel("Sample")
-plt.ylabel("Amplitude")
-plt.show()
+    # 显示图表
+    plt.show()
+
+except Exception as e:
+    print(f"Error reading or plotting data: {e}")
